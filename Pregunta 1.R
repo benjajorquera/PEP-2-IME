@@ -136,4 +136,12 @@ print(kruskal)
 # nula a favor de la alternativa, lo que quiere decir que la calificación promedio de la evaluación realizada por cada uno de los
 # oficiales a los Lavatroopers es diferente para al menos un oficial.
 
+# A partir de estos resultados se realiza un análisis post.hoc
+post_hoc <- pairwise.wilcox.test(datos_lavatroopers$puntaje, datos_lavatroopers$oficiales, p.adjust.method = "holm",
+                                 paired = FALSE)
 
+print(post_hoc)
+
+# Donde se puede observar que la diferencia más significativa se encuentra
+# en los pares con la evaluación del comandante, debido a los p valores obtenidos
+# con la prueba de Holm.
