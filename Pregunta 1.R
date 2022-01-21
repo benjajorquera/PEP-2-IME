@@ -1,5 +1,10 @@
 # Librerías utlizadas:
 
+if (!require(ez)){
+  install.packages("ez", dependencies = TRUE )
+  require (ez)
+}
+
 
 # Pregunta 1
 # (23 puntos) Lord Vader desea saber si los niveles de exigencia con que los
@@ -31,6 +36,7 @@ datos_lavatroopers <- datos_lavatroopers %>%filter(division ==
                                                      "Lavatrooper") %>% 
   select(eval_instructor, eval_capitan, eval_comandante, eval_general)
 
+datos_lavatroopers <- as.data.frame(apply(datos_lavatroopers, 3, as.integer))
 # La pregunta detrás de esta prueba es ¿se diferencias las medias poblacionales?
 # lo cual nos permite plantear las siguientes hipótesis de acuerdo a lo
 # solicitado:
@@ -63,3 +69,41 @@ datos_lavatroopers <- datos_lavatroopers %>% pivot_longer(c("eval_instructor",
                                                             "eval_general"),
                                   names_to = "oficiales", values_to = "puntaje")
 
+
+# Se crea la variable categórica "instancia"
+instancias_lavatroopers <- factor(1:100)
+datos_lavatroopers <- data.frame(datos_lavatroopers, instancias_lavatroopers)
+
+# Se convierte la variable "oficiales" a tipo categórica
+datos_lavatroopers[["oficiales"]] <- factor(datos_lavatroopers[["oficiales"]])
+
+# Se realiza la prueba de normalidad de Shapiro
+prueba_shapiro <- shapiro.test(datos_lavatroopers$puntaje)
+print(prueba_shapiro) 
+
+# Como el p valor = 0.328 > 0.05 el nivel de significancia escogido, se puede
+# concluir que los datos siguen una distribución normal, y para comprobar
+# esta condición se realizan gráficos QQ:
+
+gqq_lavatroopers <- ggqqplot(datos_lavatroopers, x = "puntaje", y = "oficiales",
+                      color = "oficiales")
+gqq_lavatroopers <- gqq_lavatroopers + facet_wrap(~ oficiales) + 
+  rremove("x.ticks") + rremove("x.text") + 
+  rremove("y.ticks") + rremove("y.text") + 
+  rremove("axis.title")
+print(gqq_lavatroopers)
+
+# Donde no se observan valores atípicos en las observaciones, por lo tanto, 
+# se puede suponer razonablemente que las distribuciones se asemejan a la normal.
+
+# 4. La matriz de varianzas-covarianzas es esférica, es decir, las varianzas
+# entre los diferentes niveles de las medidas repetidas deben ser iguales.
+# Esta condición será comprobada al realizar el procedimiento ANOVA con
+# ezANOVA().
+
+#Procedimiento ANOVA
+prueba_lavatroopers <- ezANOVA( data = datos_lavatroopers , dv = puntaje ,
+                                within = oficiales ,
+                                wid = instancias_lavatroopers,
+                                return_aov = TRUE )
+print(prueba_lavatroopers)
