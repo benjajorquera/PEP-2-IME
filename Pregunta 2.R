@@ -50,13 +50,8 @@ set.seed(2876)
 # Se cargan de datos archivo csv.
 datos <- read.csv2(file.choose(), header=TRUE)
 
-#Se hace una copia de los datos y se elimina la variable es_clon y la variable division
-aux <- datos
-aux$es_clon <- NULL
-aux$division <- NULL
-
-#Se obtienen los nombres de las varaibles
-variables <- colnames(aux)
+# Variables escogidas para ser posibles predictoras
+variables <- c("estatura", "peso", "eval_instructor", "eval_general", "velocidad", "fuerza", "resistencia", "agilidad", "presicion")
 
 #Se seleccionan al azar 8 varaibles predictoras
 predictoras <- sample(variables, size = 8)
@@ -68,8 +63,6 @@ datos$es_clon <- factor(datos$es_clon)
 
 # Se obtiene una muestra de 400 datos
 datos_2 <- datos %>% sample_n(size=400, replace=FALSE)
-head(muestra)
-
 
 # Separar conjuntos de entrenamiento y prueba.
 n <- nrow(datos_2)
@@ -123,17 +116,31 @@ print(vifs)
 cat("\n Promedio VIF: ")
 print(mean(vifs))
 
+# velocidad resistencia        peso      fuerza 
+# 7.694569    7.851373    4.510058    3.331894
+
+# Promedio VIF: > print(mean(vifs))
+# 5.84697
+
+# Podemos observar que ninguna de las variables presenta un VIF superior a 10
+# pero el promedio es bastante superior a 1 por lo que el modelo presenta sesgo
+# Y no es generalizable, por lo que no se recomienda usar el modelo.
+
 
 # Independencia de los residuos .
 cat("Verificación de independencia de los residuos \n")
 cat(" - - - - - - - - - - -- - - - - - - - - - - - - - - - - - - - -- - - - - -\n")
 print(durbinWatsonTest(mejor, max.lag = 5))
 
+# lag Autocorrelation D-W Statistic p-value
+# 1      0.04750226      1.904939   0.336
+# 2     -0.03670683      2.073283   0.218
+# 3      0.05230136      1.878862   0.262
+# 4      0.08721694      1.800892   0.128
+# 5     -0.02082599      2.016978   0.564
 
-# Detectar posibles valores atípicos .
-cat("Identificación de posibles valores atípicos \n")
-cat("- - - - - - - - - - -- - - - - - - - - - - - - - - - - - - - -- - - - - -\n")
-plot(mejor)
+# Todas los residuos son independientes, ya que sus p-values son mucho mayor a 
+# alfa = 0.01
 
 
 # Obtener los residuos y las estadísticas .
@@ -158,32 +165,11 @@ print(rownames(entrenamiento[sospechosos1, ]) )
 
 
 # Revisar casos con distancia de Cook mayor a uno.
-sospechosos2 <- which(output [["cooks.distance"]] > 1)
+sospechosos2 <- which(output[["cooks.distance"]] > 1)
 sospechosos2 <- sort(sospechosos2)
 cat("\n\n")
 cat("Residuales con una distancia de Cook alta \n")
 cat(" - - - - - - - - - - -- - - - - - - - - - - - - - - - - - - - -- - - - - - - - -\n")
-print(rownames(entrenamiento[sospechosos2, ]) )
+print(rownames(entrenamiento[sospechosos2, ]))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+# No hay caos con distancia Cook mayor a 1.
