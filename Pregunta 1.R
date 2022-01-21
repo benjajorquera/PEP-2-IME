@@ -1,8 +1,38 @@
 # Librerías utlizadas:
 
+if (!require(tidyverse)){
+  install.packages("tidyverse", dependencies = TRUE )
+  require (tidyverse)
+}
+
+if (!require(ggpubr)){
+  install.packages("ggpubr", dependencies = TRUE )
+  require (ggpubr)
+}
+
 if (!require(ez)){
   install.packages("ez", dependencies = TRUE )
   require (ez)
+}
+
+if (!require(datasets)){
+  install.packages("datasets", dependencies = TRUE )
+  require (datasets)
+}
+
+if (!require(DescTools)){
+  install.packages("DescTools", dependencies = TRUE )
+  require (DescTools)
+}
+
+if (!require(nlme)){
+  install.packages("nlme", dependencies = TRUE )
+  require (nlme)
+}
+
+if (!require(emmeans)){
+  install.packages("emmeans", dependencies = TRUE )
+  require (emmeans)
 }
 
 
@@ -32,11 +62,10 @@ datos_lavatroopers <- read.csv2(file.choose(), header=TRUE)
 
 # Se filtran los datos seleccionando a los reclutas "Lavatroopers" y las
 # evaluaciones de sus oficiales:
-datos_lavatroopers <- datos_lavatroopers %>%filter(division == 
+datos_lavatroopers <- datos_lavatroopers %>% filter(division == 
                                                      "Lavatrooper") %>% 
   select(eval_instructor, eval_capitan, eval_comandante, eval_general)
 
-datos_lavatroopers <- as.data.frame(apply(datos_lavatroopers, 3, as.integer))
 # La pregunta detrás de esta prueba es ¿se diferencias las medias poblacionales?
 # lo cual nos permite plantear las siguientes hipótesis de acuerdo a lo
 # solicitado:
@@ -96,14 +125,15 @@ print(gqq_lavatroopers)
 # Donde no se observan valores atípicos en las observaciones, por lo tanto, 
 # se puede suponer razonablemente que las distribuciones se asemejan a la normal.
 
-# 4. La matriz de varianzas-covarianzas es esférica, es decir, las varianzas
-# entre los diferentes niveles de las medidas repetidas deben ser iguales.
-# Esta condición será comprobada al realizar el procedimiento ANOVA con
-# ezANOVA().
+# El procedimiento ANOVA no se puede decretar debido a la falta de valores,
+# por lo tanto la prueba cambia a la prueba no paramétrica de Kruskal, donde
+# sus condiciones fueron confirmadas anteriormente.
 
-#Procedimiento ANOVA
-prueba_lavatroopers <- ezANOVA( data = datos_lavatroopers , dv = puntaje ,
-                                within = oficiales ,
-                                wid = instancias_lavatroopers,
-                                return_aov = TRUE )
-print(prueba_lavatroopers)
+kruskal <- kruskal.test(puntaje ~ oficiales, data = datos_lavatroopers)
+print(kruskal)
+
+# Lo cual nos da un p valor de 2.2e-16, por lo tanto se rechaza la hipótesis
+# nula a favor de la alternativa, lo que quiere decir que la calificación promedio de la evaluación realizada por cada uno de los
+# oficiales a los Lavatroopers es diferente para al menos un oficial.
+
+
