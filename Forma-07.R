@@ -334,3 +334,23 @@ cat(" - - - - - - - - - - -- - - - - - - - - - - - - - - - - - - - -- - - - - - 
 print(rownames(entrenamiento[sospechosos2, ]))
 
 # No hay caos con distancia Cook mayor a 1.
+
+
+
+
+
+
+
+# Pregunta 3
+# (9 puntos) Proponga un ejemplo novedoso (no mencionado en clase ni que aparezca en las lecturas dadas) en donde un
+# estudio o experimento, relacionado con el sentir de los estudiantes de la Universidad de Santiago respecto al retorno a
+# la presencialidad, necesite utilizar una prueba de Kruskal-Wallis debido a problemas con la escala de la variable
+# dependiente en estudio. Indiqué cuáles serían las variables involucradas en su ejemplo (con sus respectivos niveles) y las
+# hipótesis nula y alternativa a contrastar.
+
+# Que tanto miedo tienes de volver a clase de manera presencial dado los nuevos casos de coronavirus omicron
+# Casos: Mucho, Nada, Indiferente
+
+
+# H0: La media no difiere en ningun caso.
+# H1: La media difiere en almenos un caso.
